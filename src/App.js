@@ -5,9 +5,10 @@ import Logo from "./components/Logo/logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-
+import Signin from "./components/signin/signin";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
+import Register from "./components/register/register";
 const app = new Clarifai.App({
   apiKey: "60f55ed2fdc64f07b08c23b312ceeb01",
 });
@@ -18,13 +19,15 @@ class App extends Component {
       input: "",
       imageUrl: "",
       box: {},
+      route: "signin", //to show the sign in page by default
+      isSignedIn: false,
     };
   }
 
   calculateFaceLocation = (data) => {
     const clarifaiFace =
       data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById("inputImage");
+    const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
     return {
@@ -33,12 +36,10 @@ class App extends Component {
       rightCol: width - clarifaiFace.right_col * width,
       bottomRow: height - clarifaiFace.bottom_row * height,
     };
-    // console.log(width, height);
   };
 
   displayFaceBox = (box) => {
-    console.log(box);
-    this.setState = ({ box: box });
+    this.setState({ box: box });
   };
 
   onInputChange = (event) => {
@@ -47,7 +48,6 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    console.log("click");
 
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, this.state.input) //this.state.input and not imageUrl because it will give an error "bad request"
@@ -60,7 +60,16 @@ class App extends Component {
     // );
   };
 
-  render() { 
+  onRouteChange = (route) => {
+    if (route === "signout") {
+      this.setState({ isSignedIn: false });
+    } else if (route === "home") {
+      this.setState({ isSignedIn: true });
+    }
+    this.setState({ route: route });
+  };
+
+  render() {
     return (
       <div className="App">
         <Particles
@@ -132,15 +141,29 @@ class App extends Component {
             retina_detect: true,
           }}
         />
-
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onButtonSubmit={this.onButtonSubmit}
+        {/* since we have to return multiple statements we have to wrap them in a div below. */}
+        <Navigation
+          isSignedIn={this.state.isSignedIn}
+          onRouteChange={this.onRouteChange}
         />
-        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+        {this.state.route === "home" ? (
+          <div>
+            <Logo />
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onButtonSubmit={this.onButtonSubmit}
+            />
+            <FaceRecognition
+              box={this.state.box}
+              imageUrl={this.state.imageUrl}
+            />
+          </div>
+        ) : this.state.route === "signin" ? (
+          <Signin onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register onRouteChange={this.onRouteChange} />
+        )}
       </div>
     );
   }
