@@ -5,10 +5,10 @@ import Logo from "./components/Logo/logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import Signin from "./components/signin/signin";
+import Signin from "./components/signin/signin2";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
-import Register from "./components/register/register";
+import Register from "./components/register/register2";
 const app = new Clarifai.App({
   apiKey: "60f55ed2fdc64f07b08c23b312ceeb01",
 });
@@ -77,7 +77,7 @@ class App extends Component {
           params={{
             particles: {
               number: { value: 35, density: { enable: true, value_area: 800 } },
-              color: { value: "#ffffff" },
+              color: { value: "#0D0D0D" },
               shape: {
                 type: "circle",
                 stroke: { width: 0, color: "#000000" },
@@ -102,7 +102,7 @@ class App extends Component {
               line_linked: {
                 enable: true,
                 distance: 150,
-                color: "#ffffff",
+                color: "#BFBFBF",
                 opacity: 0.4,
                 width: 1,
               },
