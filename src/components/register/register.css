@@ -37,7 +37,7 @@ label {
   font-size: 1.2rem;
 }
 
-.signinBtn {
+.regBtn {
   padding: 10px 15px;
   background-color: rgba(54, 54, 54, 0.644);
   color: #fff;
@@ -47,15 +47,6 @@ label {
   font-size: 1.2rem;
 }
 
-.signinBtn:hover {
+.regBtn:hover {
   background-color: rgba(17, 17, 17, 0.747);
-}
-
-.regLink {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-.regLink:hover {
-  color: #111;
-  text-decoration: underline;
 }

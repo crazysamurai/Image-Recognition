@@ -1,8 +1,9 @@
 import React from "react";
 import "./ImageLinkForm.css";
+
 const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
   return (
-    <div>
+    <div class="imgForm">
       <p className="f3">
         This app will detect faces in your images. Give it a try!
       </p>

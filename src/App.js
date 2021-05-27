@@ -5,10 +5,10 @@ import Logo from "./components/Logo/logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import Signin from "./components/signin/signin2";
+import Signin from "./components/signin/signin";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
-import Register from "./components/register/register2";
+import Register from "./components/register/register";
 const app = new Clarifai.App({
   apiKey: "60f55ed2fdc64f07b08c23b312ceeb01",
 });
@@ -21,14 +21,27 @@ class App extends Component {
       box: {},
       route: "signin", //to show the sign in page by default
       isSignedIn: false,
+      user: {
+        id: "",
+        name: "",
+        email: "",
+        entries: 0,
+        joined: "",
+      },
     };
   }
 
-  // componentDidMount() {
-  //   fetch("http://localhost:3000")
-  //     .then((response) => response.json())
-  //     .then(console.log);
-  // }
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        entries: data.entries,
+        joined: data.joined,
+      },
+    });
+  };
 
   calculateFaceLocation = (data) => {
     const clarifaiFace =
@@ -83,7 +96,7 @@ class App extends Component {
           params={{
             particles: {
               number: { value: 35, density: { enable: true, value_area: 800 } },
-              color: { value: "#0D0D0D" },
+              color: { value: "#000000" },
               shape: {
                 type: "circle",
                 stroke: { width: 0, color: "#000000" },
@@ -108,13 +121,13 @@ class App extends Component {
               line_linked: {
                 enable: true,
                 distance: 150,
-                color: "#BFBFBF",
+                color: "#111111",
                 opacity: 0.4,
                 width: 1,
               },
               move: {
                 enable: true,
-                speed: 1,
+                speed: 0.5,
                 direction: "none",
                 random: false,
                 straight: false,
@@ -123,27 +136,27 @@ class App extends Component {
                 attract: { enable: false, rotateX: 600, rotateY: 1200 },
               },
             },
-            interactivity: {
-              detect_on: "canvas",
-              events: {
-                onhover: { enable: true, mode: "repulse" },
-                onclick: { enable: true, mode: "push" },
-                resize: true,
-              },
-              modes: {
-                grab: { distance: 400, line_linked: { opacity: 1 } },
-                bubble: {
-                  distance: 400,
-                  size: 40,
-                  duration: 2,
-                  opacity: 8,
-                  speed: 3,
-                },
-                repulse: { distance: 200, duration: 0.4 },
-                push: { particles_nb: 4 },
-                remove: { particles_nb: 2 },
-              },
-            },
+            // interactivity: {
+            //   detect_on: "canvas",
+            //   events: {
+            //     onhover: { enable: true, mode: "repulse" },
+            //     onclick: { enable: true, mode: "push" },
+            //     resize: true,
+            //   },
+            //   modes: {
+            //     grab: { distance: 400, line_linked: { opacity: 1 } },
+            //     bubble: {
+            //       distance: 400,
+            //       size: 40,
+            //       duration: 2,
+            //       opacity: 8,
+            //       speed: 3,
+            //     },
+            //     repulse: { distance: 200, duration: 0.4 },
+            //     push: { particles_nb: 4 },
+            //     remove: { particles_nb: 2 },
+            //   },
+            // },
             retina_detect: true,
           }}
         />
@@ -168,7 +181,10 @@ class App extends Component {
         ) : this.state.route === "signin" ? (
           <Signin onRouteChange={this.onRouteChange} />
         ) : (
-          <Register onRouteChange={this.onRouteChange} />
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
         )}
       </div>
     );
