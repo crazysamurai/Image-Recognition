@@ -1,17 +1,32 @@
 import React, { Component } from "react";
-import "./App.css";
-import Navigation from "./components/Navigation/Navigation.jsx";
+import Particles from "react-particles-js";
+import Clarifai from "clarifai";
+import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
+import Navigation from "./components/Navigation/Navigation";
+import Signin from "./components/signin/signin";
+import Register from "./components/register/register";
 import Logo from "./components/Logo/logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
-import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import Signin from "./components/signin/signin";
-import Particles from "react-particles-js";
-import Clarifai from "clarifai";
-import Register from "./components/register/register";
+import "./App.css";
+
+//You must add your own API key here from Clarifai.
 const app = new Clarifai.App({
   apiKey: "60f55ed2fdc64f07b08c23b312ceeb01",
 });
+
+const particlesOptions = {
+  particles: {
+    number: {
+      value: 30,
+      density: {
+        enable: true,
+        value_area: 800,
+      },
+    },
+  },
+};
+
 class App extends Component {
   constructor() {
     super();
@@ -19,7 +34,7 @@ class App extends Component {
       input: "",
       imageUrl: "",
       box: {},
-      route: "signin", //to show the sign in page by default
+      route: "signin",
       isSignedIn: false,
       user: {
         id: "",
@@ -35,8 +50,8 @@ class App extends Component {
     this.setState({
       user: {
         id: data.id,
-        email: data.email,
         name: data.name,
+        email: data.email,
         entries: data.entries,
         joined: data.joined,
       },
@@ -67,16 +82,26 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-
     app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input) //this.state.input and not imageUrl because it will give an error "bad request"
-      .then((response) =>
-        this.displayFaceBox(this.calculateFaceLocation(response))
-      )
+      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+      .then((response) => {
+        console.log(response);
+        if (response) {
+          fetch("http://localhost:3000/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.state.user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((count) => {
+              this.setState(Object.assign(this.state.user, { entries: count }));
+            });
+        }
+        this.displayFaceBox(this.calculateFaceLocation(response));
+      })
       .catch((err) => console.log(err));
-    // console.log(
-    //   response.outputs[0].data.regions[0].region_info.bounding_box
-    // );
   };
 
   onRouteChange = (route) => {
@@ -89,97 +114,29 @@ class App extends Component {
   };
 
   render() {
+    const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
-        <Particles
-          className="particles"
-          params={{
-            particles: {
-              number: { value: 35, density: { enable: true, value_area: 800 } },
-              color: { value: "#000000" },
-              shape: {
-                type: "circle",
-                stroke: { width: 0, color: "#000000" },
-                polygon: { nb_sides: 5 },
-                image: { src: "img/github.svg", width: 100, height: 100 },
-              },
-              opacity: {
-                value: 0.5,
-                random: false,
-                anim: {
-                  enable: false,
-                  speed: 1,
-                  opacity_min: 0.1,
-                  sync: false,
-                },
-              },
-              size: {
-                value: 3,
-                random: true,
-                anim: { enable: false, speed: 40, size_min: 0.1, sync: false },
-              },
-              line_linked: {
-                enable: true,
-                distance: 150,
-                color: "#111111",
-                opacity: 0.4,
-                width: 1,
-              },
-              move: {
-                enable: true,
-                speed: 0.5,
-                direction: "none",
-                random: false,
-                straight: false,
-                out_mode: "out",
-                bounce: false,
-                attract: { enable: false, rotateX: 600, rotateY: 1200 },
-              },
-            },
-            // interactivity: {
-            //   detect_on: "canvas",
-            //   events: {
-            //     onhover: { enable: true, mode: "repulse" },
-            //     onclick: { enable: true, mode: "push" },
-            //     resize: true,
-            //   },
-            //   modes: {
-            //     grab: { distance: 400, line_linked: { opacity: 1 } },
-            //     bubble: {
-            //       distance: 400,
-            //       size: 40,
-            //       duration: 2,
-            //       opacity: 8,
-            //       speed: 3,
-            //     },
-            //     repulse: { distance: 200, duration: 0.4 },
-            //     push: { particles_nb: 4 },
-            //     remove: { particles_nb: 2 },
-            //   },
-            // },
-            retina_detect: true,
-          }}
-        />
-        {/* since we have to return multiple statements we have to wrap them in a div below. */}
+        <Particles className="particles" params={particlesOptions} />
         <Navigation
-          isSignedIn={this.state.isSignedIn}
+          isSignedIn={isSignedIn}
           onRouteChange={this.onRouteChange}
         />
-        {this.state.route === "home" ? (
+        {route === "home" ? (
           <div>
             <Logo />
-            <Rank />
+            <Rank
+              name={this.state.user.name}
+              entries={this.state.user.entries}
+            />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition
-              box={this.state.box}
-              imageUrl={this.state.imageUrl}
-            />
+            <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
-        ) : this.state.route === "signin" ? (
-          <Signin onRouteChange={this.onRouteChange} />
+        ) : route === "signin" ? (
+          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
         ) : (
           <Register
             loadUser={this.loadUser}
