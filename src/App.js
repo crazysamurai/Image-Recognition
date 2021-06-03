@@ -9,17 +9,17 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import "./App.css";
 
-const particlesOptions = {
-  particles: {
-    number: {
-      value: 30,
-      density: {
-        enable: true,
-        value_area: 800,
-      },
-    },
-  },
-};
+// const particlesOptions = {
+//   particles: {
+//     number: {
+//       value: 30,
+//       density: {
+//         enable: true,
+//         value_area: 800,
+//       },
+//     },
+//   },
+// };
 const initialState = {
   input: "",
   imageUrl: "",
@@ -117,7 +117,50 @@ class App extends Component {
     const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
-        <Particles className="particles" params={particlesOptions} />
+        <Particles
+          className="particles"
+          params={{
+            particles: {
+              number: { value: 40, density: { enable: true, value_area: 800 } },
+              color: { value: "#ffffff" },
+              shape: {
+                type: "circle",
+                stroke: { width: 0, color: "#000000" },
+                polygon: { nb_sides: 5 },
+                image: { src: "img/github.svg", width: 100, height: 100 },
+              },
+              opacity: {
+                value: 0.1666902811231592,
+                random: true,
+                anim: { enable: true, speed: 1, opacity_min: 0.1, sync: true },
+              },
+              size: {
+                value: 3,
+                random: false,
+                anim: { enable: false, speed: 40, size_min: 0.1, sync: true },
+              },
+              line_linked: {
+                enable: true,
+                distance: 100.01416867389551,
+                color: "#ffffff",
+                opacity: 0.6000850120433731,
+                width: 1.5002125301084326,
+              },
+              move: {
+                enable: true,
+                speed: 5,
+                direction: "bottom",
+                random: false,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+                attract: { enable: false, rotateX: 600, rotateY: 1200 },
+              },
+            },
+            retina_detect: false,
+          }}
+        />
+
         <Navigation
           isSignedIn={isSignedIn}
           onRouteChange={this.onRouteChange}

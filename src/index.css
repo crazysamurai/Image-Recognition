@@ -4,16 +4,16 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Poiret One", cursive,
     "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
-  background: #ff6e7f; /* fallback for old browsers */
+  background: #5614b0; /* fallback for old browsers */
   background: -webkit-linear-gradient(
     to right,
-    #bfe9ff,
-    #ff6e7f
+    #dbd65c,
+    #5614b0
   ); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to right,
-    #bfe9ff,
-    #ff6e7f
+    #dbd65c,
+    #5614b0
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
