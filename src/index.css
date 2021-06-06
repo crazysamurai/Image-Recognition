@@ -24,3 +24,12 @@ code {
 button {
   cursor: pointer;
 }
+/* 
+@media (max-width: 500px) {
+  body {
+    color: blue;
+  }
+}
+
+@media (orientation: landscape) {
+  /* or portrait */
